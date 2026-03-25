@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Ganancias — Ancla Seguros</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #4A3AFF;
+  --purple-dark: #3D2E9E;
+  --cyan: #00D4FF;
+  --navy: #1E1B4B;
+  --lavender: #B8B0E8;
+  --cta: #FF6B5B;
+  --gray: #4A5568;
+  --gray-light: #F7FAFC;
+  --white: #FFFFFF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--gray-light);
+  color: var(--navy);
+  min-height: 100vh;
+}
+.hero {
+  background: linear-gradient(135deg, #4A3AFF 0%, #3D2E9E 60%, #1E1B4B 100%);
+  padding: 48px 24px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60%; right: -20%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 24px;
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero h1 span { color: var(--cyan); }
+.hero p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.7);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 520px;
+  margin: -28px auto 0;
+  padding: 0 16px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(74,58,255,0.08);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--purple);
+  margin-bottom: 16px;
+}
+
+.slider-group { margin-bottom: 18px; }
+.slider-group:last-child { margin-bottom: 0; }
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.slider-label span:first-child {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+}
+.slider-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--purple);
+}
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #E8E6FF;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--purple);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(74,58,255,0.3);
+}
+input[type=range]::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--purple);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(74,58,255,0.3);
+}
+
+.funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+.funnel-step:nth-child(2) { background: #F0EFFF; }
+.funnel-step:nth-child(3) { background: #E8E6FF; }
+.funnel-step:nth-child(4) { background: #D5D1FF; }
+.funnel-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray);
+  min-width: 100px;
+}
+.funnel-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(74,58,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.funnel-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.fb1 { background: var(--lavender); }
+.fb2 { background: var(--purple); opacity: 0.7; }
+.fb3 { background: var(--purple); }
+.funnel-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 36px;
+  text-align: right;
+}
+
+.net-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.net-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid #E8E6FF;
+  background: var(--white);
+  color: var(--gray);
+  transition: all 0.2s;
+  text-align: center;
+}
+.net-btn.active {
+  background: var(--purple);
+  color: var(--white);
+  border-color: var(--purple);
+  box-shadow: 0 2px 12px rgba(74,58,255,0.25);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.result-box {
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.result-box.primary {
+  background: linear-gradient(135deg, #4A3AFF 0%, #3D2E9E 100%);
+  color: var(--white);
+}
+.result-box.secondary {
+  background: #F0EFFF;
+  color: var(--navy);
+}
+.rb-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.75;
+}
+.rb-value {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+.rb-sub {
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.6;
+  line-height: 1.3;
+}
+.result-box.primary .rb-label { color: var(--cyan); opacity: 1; }
+.result-box.secondary .rb-label { color: var(--purple); }
+
+.comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #F0EFFF 0%, #E1FAFF 100%);
+}
+.comp-item { text-align: center; }
+.comp-label { font-size: 10px; font-weight: 600; color: var(--gray); text-transform: uppercase; }
+.comp-value { font-size: 18px; font-weight: 800; margin-top: 2px; }
+.comp-value.old { color: #999; text-decoration: line-through; }
+.comp-value.new { color: var(--purple); }
+.comp-arrow { font-size: 20px; color: var(--cta); }
+
+.cta-section { text-align: center; padding: 8px 0 0; }
+.cta-btn {
+  display: inline-block;
+  background: var(--cta);
+  color: var(--white);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 14px 36px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(255,107,91,0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255,107,91,0.4);
+}
+.cta-sub {
+  font-size: 12px;
+  color: var(--gray);
+  margin-top: 10px;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 11px;
+  color: #999;
+}
+.admin-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10px;
+  color: #ccc;
+  text-decoration: none;
+  opacity: 0.4;
+  cursor: pointer;
+}
+.admin-link:hover { opacity: 1; }
+
+/* Modal overlay */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 28px 24px;
+  width: 320px;
+  max-width: 92vw;
+  box-shadow: 0 8px 40px rgba(74,58,255,0.18);
+  position: relative;
+}
+.modal-box h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+.modal-close {
+  position: absolute;
+  top: 14px; right: 16px;
+  background: none; border: none;
+  font-size: 18px; cursor: pointer;
+  color: var(--gray);
+}
+.field-group { margin-bottom: 14px; }
+.field-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 5px;
+}
+.field-group input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #E8E6FF;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field-group input:focus { border-color: var(--purple); }
+.modal-error {
+  font-size: 12px;
+  color: var(--cta);
+  margin-bottom: 10px;
+  display: none;
+}
+.modal-btn {
+  width: 100%;
+  padding: 11px;
+  background: var(--purple);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.modal-btn:hover { background: var(--purple-dark); }
+.admin-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--purple);
+  margin: 16px 0 10px;
+  padding-top: 14px;
+  border-top: 1px solid #E8E6FF;
+}
+.admin-section-title:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+.field-hint {
+  font-size: 10px;
+  color: #aaa;
+  margin-top: 3px;
+}
+
+@media (max-width: 400px) {
+  .hero h1 { font-size: 26px; }
+  .rb-value { font-size: 18px; }
+  .net-btn { font-size: 11px; padding: 6px 4px; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="logo-ancla-svg.svg" alt="Ancla Seguros" style="height:40px;margin-bottom:18px;display:block;margin-left:auto;margin-right:auto;">
+  <div class="hero-badge">Programa de vendedores</div>
+  <h1>Calcula cuánto <span>puedes ganar</span></h1>
+  <p>Gana comisiones vendiendo ahorro en seguros hipotecarios con Ancla Seguros</p>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="card-title">Tu dedicación</div>
+    <div class="slider-group">
+      <div class="slider-label">
+        <span>Horas por semana</span>
+        <span class="slider-val" id="hrs-out">6 hrs</span>
+      </div>
+      <input type="range" min="2" max="20" value="6" step="1" id="hrs" oninput="calc()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label">
+        <span>Contactos por hora</span>
+        <span class="slider-val" id="cph-out">12</span>
+      </div>
+      <input type="range" min="4" max="25" value="12" step="1" id="cph" oninput="calc()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label">
+        <span>% que abre el link</span>
+        <span class="slider-val" id="ctr-out">12%</span>
+      </div>
+      <input type="range" min="5" max="30" value="12" step="1" id="ctr" oninput="calc()">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tu embudo semanal</div>
+    <div class="funnel-step">
+      <span class="funnel-label">Contactados</span>
+      <div class="funnel-bar-track"><div class="funnel-bar-fill fb1" id="bar1" style="width:100%"></div></div>
+      <span class="funnel-num" id="f-contacts">72</span>
+    </div>
+    <div class="funnel-step">
+      <span class="funnel-label">Leads</span>
+      <div class="funnel-bar-track"><div class="funnel-bar-fill fb2" id="bar2" style="width:12%"></div></div>
+      <span class="funnel-num" id="f-leads">9</span>
+    </div>
+    <div class="funnel-step">
+      <span class="funnel-label">Conversiones</span>
+      <div class="funnel-bar-track"><div class="funnel-bar-fill fb3" id="bar3" style="width:3%"></div></div>
+      <span class="funnel-num" id="f-conv">2</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tu red de vendedores</div>
+    <div class="net-row">
+      <button class="net-btn active" onclick="setNet(0,this)">Solo yo</button>
+      <button class="net-btn" onclick="setNet(3,this)">+ 3</button>
+      <button class="net-btn" onclick="setNet(5,this)">+ 5</button>
+      <button class="net-btn" onclick="setNet(10,this)">+ 10</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding:16px">
+    <div class="results-grid">
+      <div class="result-box primary">
+        <div class="rb-label">Semanal</div>
+        <div class="rb-value" id="r-week">$40.000</div>
+        <div class="rb-sub" id="r-week-sub">Ventas directas</div>
+      </div>
+      <div class="result-box primary">
+        <div class="rb-label">Mensual</div>
+        <div class="rb-value" id="r-month">$160.000</div>
+        <div class="rb-sub" id="r-month-sub">Ventas directas</div>
+      </div>
+      <div class="result-box secondary">
+        <div class="rb-label">Por hora</div>
+        <div class="rb-value" id="r-hr">$6.667</div>
+        <div class="rb-sub">Ventas directas</div>
+      </div>
+      <div class="result-box secondary">
+        <div class="rb-label">Ingreso pasivo</div>
+        <div class="rb-value" id="r-passive">$0</div>
+        <div class="rb-sub" id="r-passive-sub">Recluta vendedores</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:16px">
+    <div class="card-title" style="text-align:center">Comparación por hora</div>
+    <div class="comparison">
+      <div class="comp-item">
+        <div class="comp-label">Part-time promedio</div>
+        <div class="comp-value old">$4.730</div>
+      </div>
+      <div class="comp-arrow">→</div>
+      <div class="comp-item">
+        <div class="comp-label">Con Ancla</div>
+        <div class="comp-value new" id="comp-ancla">$6.667</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <a class="cta-btn" href="https://wa.me/56995197038?text=Quiero%20ser%20vendedor%20de%20Ancla" target="_blank">Quiero ser vendedor</a>
+    <div class="cta-sub">Sin inversión inicial · Comisiones semanales</div>
+  </div>
+
+  <div class="footer">
+    Ancla Seguros · Corredores de seguros regulados CMF<br>
+    Simulación estimada basada en promedios del programa<br>
+    <span class="admin-link" onclick="openLogin()">admin</span>
+  </div>
+</div>
+
+<!-- Login modal -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+    <h2>Acceso administrador</h2>
+    <div class="field-group">
+      <label>Usuario</label>
+      <input type="text" id="login-user" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass">
+    </div>
+    <div class="modal-error" id="login-error">Usuario o contraseña incorrectos</div>
+    <button class="modal-btn" onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- Admin panel modal -->
+<div class="modal-overlay" id="admin-modal">
+  <div class="modal-box" style="width:360px">
+    <button class="modal-close" onclick="closeModal('admin-modal')">✕</button>
+    <h2>Configuración del simulador</h2>
+
+    <div class="admin-section-title">Comisiones</div>
+    <div class="field-group">
+      <label>Comisión por venta directa ($)</label>
+      <input type="number" id="cfg-direct" value="30000" min="0" step="500" oninput="calc()">
+      <div class="field-hint">Cuánto ganas tú por cada póliza que vendes</div>
+    </div>
+    <div class="field-group">
+      <label>Comisión red nivel 1 ($)</label>
+      <input type="number" id="cfg-net1" value="6000" min="0" step="500" oninput="calc()">
+      <div class="field-hint">Ganas esto por cada venta de un vendedor que tú reclutaste</div>
+    </div>
+    <div class="field-group">
+      <label>Comisión red nivel 2 ($)</label>
+      <input type="number" id="cfg-net2" value="3000" min="0" step="500" oninput="calc()">
+      <div class="field-hint">Ganas esto por cada venta del vendedor de tu vendedor</div>
+    </div>
+
+    <div class="admin-section-title">Conversión</div>
+    <div class="field-group">
+      <label>Tasa de cierre de leads (%)</label>
+      <input type="number" id="cfg-cr" value="20" min="1" max="100" step="1" oninput="calc()">
+      <div class="field-hint">% de leads que se convierten en venta (actualmente 20%)</div>
+    </div>
+
+    <button class="modal-btn" onclick="closeModal('admin-modal')" style="margin-top:16px">Guardar y cerrar</button>
+  </div>
+</div>
+
+<script>
+let netSize = 0;
+
+// --- Admin helpers ---
+function openLogin() {
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-modal').classList.add('open');
+  setTimeout(() => document.getElementById('login-user').focus(), 100);
+}
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (u === 'cpp' && p === 'Hola.5511') {
+    closeModal('login-modal');
+    document.getElementById('admin-modal').classList.add('open');
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-modal').classList.contains('open')) doLogin();
+  if (e.key === 'Escape') {
+    closeModal('login-modal');
+    closeModal('admin-modal');
+  }
+});
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// --- Simulator ---
+function setNet(n, btn) {
+  netSize = n;
+  document.querySelectorAll('.net-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calc();
+}
+function fmt(n) { return '$' + Math.round(n).toLocaleString('es-CL'); }
+function getCfg() {
+  return {
+    direct: +(document.getElementById('cfg-direct')?.value ?? 20000),
+    net1:   +(document.getElementById('cfg-net1')?.value   ?? 6000),
+    net2:   +(document.getElementById('cfg-net2')?.value   ?? 3000),
+    cr:     +(document.getElementById('cfg-cr')?.value     ?? 20) / 100,
+  };
+}
+function calc() {
+  const hrs = +document.getElementById('hrs').value;
+  const cph = +document.getElementById('cph').value;
+  const ctr = +document.getElementById('ctr').value;
+  document.getElementById('hrs-out').textContent = hrs + ' hrs';
+  document.getElementById('cph-out').textContent = cph;
+  document.getElementById('ctr-out').textContent = ctr + '%';
+
+  const cfg = getCfg();
+  const contacts = hrs * cph;
+  const leads = Math.round(contacts * ctr / 100);
+  const conv = leads * cfg.cr;
+
+  document.getElementById('f-contacts').textContent = contacts;
+  document.getElementById('f-leads').textContent = leads;
+  document.getElementById('f-conv').textContent = conv % 1 === 0 ? conv : conv.toFixed(1);
+
+  const maxC = 20 * 25;
+  document.getElementById('bar1').style.width = Math.min(100, contacts / maxC * 100) + '%';
+  document.getElementById('bar2').style.width = Math.max(2, leads / maxC * 100) + '%';
+  document.getElementById('bar3').style.width = Math.max(1, conv / maxC * 100) + '%';
+
+  const directWeek = conv * cfg.direct;
+  const directMonth = directWeek * 4;
+  const hrRate = hrs > 0 ? Math.round(directWeek / hrs) : 0;
+
+  // Red nivel 1: vendedores que tú reclutas (asumen 60% de tu tasa de conversión)
+  const subConvWeek = conv * 0.6;
+  const passiveNet1Week = netSize * subConvWeek * cfg.net1;
+  // Red nivel 2: cada vendedor tuyo también tiene vendedores propios (mismo netSize, 60% de su tasa)
+  const passiveNet2Week = netSize * netSize * subConvWeek * 0.6 * cfg.net2;
+  const passiveWeek = passiveNet1Week + passiveNet2Week;
+  const passiveMonth = passiveWeek * 4;
+
+  const totalWeek = directWeek + passiveWeek;
+  const totalMonth = directMonth + passiveMonth;
+
+  document.getElementById('r-week').textContent = fmt(totalWeek);
+  document.getElementById('r-month').textContent = fmt(totalMonth);
+  document.getElementById('r-hr').textContent = fmt(hrRate);
+  document.getElementById('r-passive').textContent = fmt(passiveMonth);
+
+  if (netSize > 0) {
+    document.getElementById('r-week-sub').textContent = fmt(directWeek) + ' directo + ' + fmt(passiveWeek) + ' red';
+    document.getElementById('r-month-sub').textContent = fmt(directMonth) + ' directo + ' + fmt(passiveMonth) + ' red';
+    document.getElementById('r-passive-sub').textContent = 'De ' + netSize + ' vendedores';
+  } else {
+    document.getElementById('r-week-sub').textContent = 'Ventas directas';
+    document.getElementById('r-month-sub').textContent = 'Ventas directas';
+    document.getElementById('r-passive-sub').textContent = 'Recluta vendedores';
+  }
+  document.getElementById('comp-ancla').textContent = fmt(hrRate);
+}
+calc();
+</script>
+</body>
+</html>
